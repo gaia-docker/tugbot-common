@@ -14,7 +14,7 @@ import (
 func TestPublishDockerEvent(t *testing.T) {
 	const ID = "123qwe456"
 	called := false
-	ep := NewEventPublisher([]string{
+	p := NewPublisher([]string{
 		httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			body, err := ioutil.ReadAll(r.Body)
 			assert.NoError(t, err)
@@ -25,6 +25,6 @@ func TestPublishDockerEvent(t *testing.T) {
 			w.WriteHeader(http.StatusOK)
 			called = true
 		})).URL})
-	ep.Publish(dockerclient.Event{ID: ID, Status: "Running", Type: "Container"})
+	p.Publish(dockerclient.Event{ID: ID, Status: "Running", Type: "Container"})
 	assert.True(t, called)
 }

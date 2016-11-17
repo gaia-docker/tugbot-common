@@ -8,23 +8,23 @@ import (
 	log "github.com/Sirupsen/logrus"
 )
 
-type EventPublisher struct {
+type Publisher struct {
 	client *http.Client
 	urls   []string
 }
 
-func NewEventPublisher(urls []string) EventPublisher {
-	return EventPublisher{client: new(http.Client), urls: urls}
+func NewPublisher(urls []string) Publisher {
+	return Publisher{client: new(http.Client), urls: urls}
 }
 
-func (ep EventPublisher) Publish(event interface{}) {
+func (p Publisher) Publish(event interface{}) {
 	json, err := json.Marshal(event)
 	if err != nil {
 		log.Errorf("Failed to convert event interface to json", err)
 		return
 	}
 	reader := bytes.NewReader(json)
-	for _, currUrl := range ep.urls {
+	for _, currUrl := range p.urls {
 		if currUrl == "" {
 			continue
 		}
@@ -34,7 +34,7 @@ func (ep EventPublisher) Publish(event interface{}) {
 			continue
 		}
 		request.Header.Add("Content-Type", "application/json")
-		response, err := ep.client.Do(request)
+		response, err := p.client.Do(request)
 		if err != nil {
 			log.Errorf("Failed to publish event. Error: %v URL:%s event: %v", err, currUrl, event)
 			continue
