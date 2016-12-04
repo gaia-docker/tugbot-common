@@ -8,14 +8,13 @@ machine:
     BUILDER_IMAGE_NAME: gaiadocker/tugbot-common-builder
 dependencies:
   override:
+    - chmod u+x script/go_build.sh script/coverage.sh
     # create builder image
     - docker build -t $BUILDER_IMAGE_NAME -f Dockerfile.build .
-    - chmod u+x script/go_build.sh
     # run go build in a docker container
     - docker run --rm -v "$PWD":/go/src/github.com/gaia-docker/tugbot-common $BUILDER_IMAGE_NAME script/go_build.sh
 test:
   override:
-    - chmod u+x script/coverage.sh
     # run tugbot tests and generate junit.xml reports
     - docker run --rm -v "$PWD":/go/src/github.com/gaia-docker/tugbot-common $BUILDER_IMAGE_NAME script/coverage.sh
   post:
