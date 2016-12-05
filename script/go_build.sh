@@ -1,7 +1,7 @@
 #!/bin/bash
 
 go_build() {
-  glide install
+  go get ./...
   CGO_ENABLED=0 go build ./...
 }
 
