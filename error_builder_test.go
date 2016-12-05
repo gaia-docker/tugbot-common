@@ -12,3 +12,8 @@ func TestErrorBuilder(t *testing.T) {
 	ec.Append(errors.New("dos"))
 	assert.Equal(t, "uno\ndos", ec.ToError().Error())
 }
+
+func TestErrorBuilderNoErrors(t *testing.T) {
+	var ec ErrorBuilder
+	assert.Nil(t, ec.ToError())
+}
