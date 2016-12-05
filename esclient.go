@@ -7,6 +7,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"gopkg.in/olivere/elastic.v2"
+	"golang.org/x/net/context"
 )
 
 const illegalCharacters = "[:,?<>/\\*?| ]"
@@ -45,8 +46,8 @@ func (esc *ESClient) Index(doc string) error {
 		Index(esc.index).
 		Type(esc.typ).
 		BodyString(doc).
-		Refresh(true).
-		Do()
+		Refresh("true").
+		Do(context.Background())
 	if err != nil {
 		log.Errorf("Failed indexing document %s for index %s. %+v", doc, esc.index, err)
 	} else {

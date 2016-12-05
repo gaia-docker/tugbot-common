@@ -1,8 +1,11 @@
 #!/bin/bash
+distdir=.dist
 
 go_build() {
-  go get -v ./...
-  CGO_ENABLED=0 go build ./...
+  rm -rf "${distdir}"
+  mkdir "${distdir}"
+  glide install
+  CGO_ENABLED=0 go build -v -o ${distdir}/tugbot-common
 }
 
 go_build
