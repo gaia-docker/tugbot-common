@@ -2,8 +2,9 @@ package common
 
 import (
 	"errors"
-	"github.com/effoeffi/watchtower/Godeps/_workspace/src/github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestErrorBuilder(t *testing.T) {
