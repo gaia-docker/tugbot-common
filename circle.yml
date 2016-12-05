@@ -12,6 +12,8 @@ dependencies:
     # create builder image
     - docker build -t $BUILDER_IMAGE_NAME -f Dockerfile.build .
     # run go build in a docker container
+    - ls -la
+    - pwd
     - docker run --rm -v "$PWD":/go/src/github.com/gaia-docker/tugbot-common $BUILDER_IMAGE_NAME script/go_build.sh
 test:
   override:
