@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	log "github.com/Sirupsen/logrus"
+	"golang.org/x/net/context"
 	"gopkg.in/olivere/elastic.v2"
 )
 
@@ -45,8 +46,8 @@ func (esc *ESClient) Index(doc string) error {
 		Index(esc.index).
 		Type(esc.typ).
 		BodyString(doc).
-		Refresh(true).
-		Do()
+		Refresh("true").
+		Do(context.Background())
 	if err != nil {
 		log.Errorf("Failed indexing document %s for index %s. %+v", doc, esc.index, err)
 	} else {

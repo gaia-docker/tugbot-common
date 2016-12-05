@@ -20,7 +20,7 @@ func NewPublisher(urls []string) Publisher {
 func (p Publisher) Publish(event interface{}) {
 	json, err := json.Marshal(event)
 	if err != nil {
-		log.Errorf("Failed to convert event interface to json", err)
+		log.Error("Failed to convert event interface to json", err)
 		return
 	}
 	reader := bytes.NewReader(json)
@@ -30,7 +30,7 @@ func (p Publisher) Publish(event interface{}) {
 		}
 		request, err := http.NewRequest("POST", currUrl, reader)
 		if err != nil {
-			log.Errorf("Failed to create request. URL: %s Event: %v", currUrl)
+			log.Errorf("Failed to create request. URL: %s Event: %v", currUrl, event)
 			continue
 		}
 		request.Header.Add("Content-Type", "application/json")
