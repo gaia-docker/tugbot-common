@@ -18,7 +18,6 @@ generate_cover_data() {
   for pkg in "$@"; do
     f="$workdir/$(echo $pkg | tr / -).cover"
     tf="$workdir/$(echo $pkg | tr / -)_tests.xml"
-    go get -v
     go test -v -covermode="$mode" -coverprofile="$f" "$pkg" | go-junit-report > "$tf"
   done
 
