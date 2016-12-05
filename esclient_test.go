@@ -1,4 +1,4 @@
-package elasticsearch
+package common
 
 import (
 	"github.com/stretchr/testify/assert"
