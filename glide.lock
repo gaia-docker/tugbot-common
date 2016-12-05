@@ -1,0 +1,38 @@
+hash: 23fd83f1db0d97e5fb346275f65d4be9f3460b8c01f69fd926f8d26c466d4568
+updated: 2016-12-05T11:54:03.5077352+02:00
+imports:
+- name: github.com/Sirupsen/logrus
+  version: d26492970760ca5d33129d2d799e34be5c4782eb
+- name: golang.org/x/net
+  version: 6cdc0daab091c43fc46193327e0047b4f883c613
+  subpackages:
+  - context
+  - context/ctxhttp
+- name: golang.org/x/sys
+  version: f5a6bd43051d3f1f5dd3e0dbd531721aa5e75d28
+  subpackages:
+  - unix
+- name: gopkg.in/olivere/elastic.v2
+  version: b272fab42387a42585235d56f8c6b53b13ddfb7d
+- name: gopkg.in/olivere/elastic.v5
+  version: b272fab42387a42585235d56f8c6b53b13ddfb7d
+  subpackages:
+  - backoff
+  - uritemplates
+testImports:
+- name: github.com/davecgh/go-spew
+  version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
+  subpackages:
+  - spew
+- name: github.com/docker/go-units
+  version: e30f1e79f3cd72542f2026ceec18d3bd67ab859c
+- name: github.com/pmezard/go-difflib
+  version: d8ed2627bdf02c080bf22230dbb337003b7aba2d
+  subpackages:
+  - difflib
+- name: github.com/samalba/dockerclient
+  version: a3036261847103270e9f732509f43b5f98710ace
+- name: github.com/stretchr/testify
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
+  subpackages:
+  - assert

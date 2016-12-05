@@ -1,0 +1,12 @@
+package: github.com/gaia-docker/tugbot-common
+import:
+- package: github.com/Sirupsen/logrus
+  version: v0.11.0
+- package: gopkg.in/olivere/elastic.v2
+  version: v5.0.13
+testImport:
+- package: github.com/samalba/dockerclient
+- package: github.com/stretchr/testify
+  version: v1.1.4
+  subpackages:
+  - assert
