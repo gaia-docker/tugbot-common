@@ -7,7 +7,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
-	"gopkg.in/olivere/elastic.v5"
+	"gopkg.in/olivere/elastic.v2"
 )
 
 const illegalCharacters = "[:,?<>/\\*?| ]"
