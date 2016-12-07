@@ -1,15 +1,15 @@
 hash: 23fd83f1db0d97e5fb346275f65d4be9f3460b8c01f69fd926f8d26c466d4568
-updated: 2016-12-05T11:54:03.5077352+02:00
+updated: 2016-12-07T15:16:57.9875173+02:00
 imports:
 - name: github.com/Sirupsen/logrus
   version: d26492970760ca5d33129d2d799e34be5c4782eb
 - name: golang.org/x/net
-  version: 6cdc0daab091c43fc46193327e0047b4f883c613
+  version: 9773060888fba93b172cedcd70127db1ab739bd1
   subpackages:
   - context
   - context/ctxhttp
 - name: golang.org/x/sys
-  version: f5a6bd43051d3f1f5dd3e0dbd531721aa5e75d28
+  version: 478fcf54317e52ab69f40bb4c7a1520288d7f7ea
   subpackages:
   - unix
 - name: gopkg.in/olivere/elastic.v2
