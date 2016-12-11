@@ -22,10 +22,10 @@ type taskManagerImpl struct {
 }
 
 func NewTaskManager() TaskManager {
-	return taskManagerImpl{}
+	return &taskManagerImpl{}
 }
 
-func (manager taskManagerImpl) RunNewTask(task Task) {
+func (manager *taskManagerImpl) RunNewTask(task Task) {
 	stop := make(chan bool)
 	manager.tasks = append(manager.tasks, stop)
 	go func(quit chan bool) {
@@ -33,7 +33,7 @@ func (manager taskManagerImpl) RunNewTask(task Task) {
 	}(stop)
 }
 
-func (manager taskManagerImpl) StopTasks() {
+func (manager *taskManagerImpl) StopTasks() {
 	for _, currTask := range manager.tasks {
 		currTask <- true
 	}
