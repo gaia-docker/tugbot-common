@@ -7,6 +7,7 @@ import (
 )
 
 type Task struct {
+	ID       string
 	Name     string
 	Job      func() error
 	Interval time.Duration
@@ -18,23 +19,25 @@ type TaskManager interface {
 }
 
 type taskManagerImpl struct {
-	tasks []chan bool
+	taskIdToStopChannel map[string]chan bool
 }
 
 func NewTaskManager() TaskManager {
-	return &taskManagerImpl{}
+	return &taskManagerImpl{taskIdToStopChannel: make(map[string]chan bool)}
 }
 
 func (manager *taskManagerImpl) RunNewTask(task Task) {
-	stop := make(chan bool)
-	manager.tasks = append(manager.tasks, stop)
-	go func(quit chan bool) {
-		recurring(task, quit)
-	}(stop)
+	if _, ok := manager.taskIdToStopChannel[task.ID]; !ok {
+		stop := make(chan bool)
+		manager.taskIdToStopChannel[task.ID] = stop
+		go func(quit chan bool) {
+			recurring(task, quit)
+		}(stop)
+	}
 }
 
 func (manager *taskManagerImpl) StopTasks() {
-	for _, currTask := range manager.tasks {
+	for _, currTask := range manager.taskIdToStopChannel {
 		currTask <- true
 	}
 }

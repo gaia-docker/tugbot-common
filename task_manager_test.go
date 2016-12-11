@@ -52,6 +52,7 @@ func TestTaskManagerRunTasks(t *testing.T) {
 	manager := NewTaskManager()
 	ok1, ok2 := false, false
 	manager.RunNewTask(Task{
+		ID:   "t1-id",
 		Name: "t1",
 		Job: func() error {
 			defer wg.Done()
@@ -62,6 +63,7 @@ func TestTaskManagerRunTasks(t *testing.T) {
 		Interval: time.Second * 10,
 	})
 	manager.RunNewTask(Task{
+		ID:   "t2-id",
 		Name: "t2",
 		Job: func() error {
 			defer wg.Done()
