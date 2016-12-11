@@ -1,13 +1,13 @@
 package common
 
 import (
-	"errors"
-	"fmt"
-	"strings"
-
 	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
 	"gopkg.in/olivere/elastic.v2"
+
+	"errors"
+	"fmt"
+	"strings"
 )
 
 const illegalCharacters = "[:,?<>/\\*?| ]"

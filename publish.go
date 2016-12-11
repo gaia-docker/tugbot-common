@@ -1,11 +1,11 @@
 package common
 
 import (
-	"net/http"
+	log "github.com/Sirupsen/logrus"
 
 	"bytes"
 	"encoding/json"
-	log "github.com/Sirupsen/logrus"
+	"net/http"
 )
 
 type Publisher struct {

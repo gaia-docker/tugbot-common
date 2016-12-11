@@ -1,14 +1,14 @@
 package common
 
 import (
+	"github.com/samalba/dockerclient"
+	"github.com/stretchr/testify/assert"
+
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/samalba/dockerclient"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestPublishDockerEvent(t *testing.T) {

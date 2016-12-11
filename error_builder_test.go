@@ -1,10 +1,10 @@
 package common
 
 import (
+	"github.com/stretchr/testify/assert"
+
 	"errors"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestErrorBuilder(t *testing.T) {
