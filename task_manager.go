@@ -1,9 +1,9 @@
 package common
 
 import (
-	"time"
-
 	log "github.com/Sirupsen/logrus"
+
+	"time"
 )
 
 type Task struct {
@@ -12,7 +12,34 @@ type Task struct {
 	Interval time.Duration
 }
 
-func Recurring(task Task, quit chan bool) error {
+type TaskManager interface {
+	RunNewTask(Task)
+	StopTasks()
+}
+
+type taskManagerImpl struct {
+	tasks []chan bool
+}
+
+func NewTaskManager() TaskManager {
+	return taskManagerImpl{}
+}
+
+func (manager taskManagerImpl) RunNewTask(task Task) {
+	stop := make(chan bool)
+	manager.tasks = append(manager.tasks, stop)
+	go func(quit chan bool) {
+		recurring(task, quit)
+	}(stop)
+}
+
+func (manager taskManagerImpl) StopTasks() {
+	for _, currTask := range manager.tasks {
+		currTask <- true
+	}
+}
+
+func recurring(task Task, quit chan bool) error {
 	for {
 		log.Debugf("Running task %s...", task.Name)
 		if err := task.Job(); err != nil {
