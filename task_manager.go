@@ -1,8 +1,9 @@
 package common
 
 import (
-	log "github.com/Sirupsen/logrus"
 	"time"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 type Task struct {
@@ -24,9 +25,10 @@ func Recurring(task Task, quit chan bool) error {
 		case <-quit:
 			timer.Stop()
 			log.Debugf("Task %s stopped", task.Name)
-			break
+
+			return nil
 		case <-timer.C:
-			log.Debugf("Timer expired (task: %s)", task.Name)
+			log.Debugf("Timer expired. Interval: %v Task: %s", task.Interval, task.Name)
 		}
 	}
 
