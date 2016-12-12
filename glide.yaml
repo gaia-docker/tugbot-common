@@ -4,6 +4,9 @@ import:
   version: v0.11.0
 - package: gopkg.in/olivere/elastic.v2
   version: v5.0.13
+- package: golang.org/x/net
+  subpackages:
+  - context
 testImport:
 - package: github.com/samalba/dockerclient
 - package: github.com/stretchr/testify

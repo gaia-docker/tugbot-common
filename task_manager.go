@@ -2,8 +2,8 @@ package common
 
 import (
 	log "github.com/Sirupsen/logrus"
+	"golang.org/x/net/context"
 
-	"github.com/fsouza/go-dockerclient/external/golang.org/x/net/context"
 	"time"
 )
 

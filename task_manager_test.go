@@ -2,9 +2,9 @@ package common
 
 import (
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/net/context"
 
 	"errors"
-	"golang.org/x/net/context"
 	"sync"
 	"testing"
 	"time"
