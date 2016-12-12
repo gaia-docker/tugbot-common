@@ -3,6 +3,7 @@ package common
 import (
 	log "github.com/Sirupsen/logrus"
 
+	"github.com/fsouza/go-dockerclient/external/golang.org/x/net/context"
 	"time"
 )
 
@@ -14,35 +15,35 @@ type Task struct {
 }
 
 type TaskManager interface {
-	RunNewTask(Task)
+	RunNewRecurringTask(Task)
 	StopTasks()
 }
 
 type taskManagerImpl struct {
-	taskIdToStopChannel map[string]chan bool
+	taskIdToCancel map[string]context.CancelFunc
 }
 
 func NewTaskManager() TaskManager {
-	return &taskManagerImpl{taskIdToStopChannel: make(map[string]chan bool)}
+	return &taskManagerImpl{taskIdToCancel: make(map[string]context.CancelFunc)}
 }
 
-func (manager *taskManagerImpl) RunNewTask(task Task) {
-	if _, ok := manager.taskIdToStopChannel[task.ID]; !ok {
-		stop := make(chan bool)
-		manager.taskIdToStopChannel[task.ID] = stop
-		go func(quit chan bool) {
-			recurring(task, quit)
-		}(stop)
+func (manager *taskManagerImpl) RunNewRecurringTask(task Task) {
+	if _, ok := manager.taskIdToCancel[task.ID]; !ok {
+		ctx, cancel := context.WithCancel(context.Background())
+		manager.taskIdToCancel[task.ID] = cancel
+		go func(ctx context.Context) {
+			recurring(ctx, task)
+		}(ctx)
 	}
 }
 
 func (manager *taskManagerImpl) StopTasks() {
-	for _, currTask := range manager.taskIdToStopChannel {
-		currTask <- true
+	for _, currTaskCancel := range manager.taskIdToCancel {
+		currTaskCancel()
 	}
 }
 
-func recurring(task Task, quit chan bool) error {
+func recurring(ctx context.Context, task Task) error {
 	for {
 		log.Debugf("Running task %s...", task.Name)
 		if err := task.Job(); err != nil {
@@ -52,7 +53,7 @@ func recurring(task Task, quit chan bool) error {
 		}
 		timer := time.NewTimer(task.Interval)
 		select {
-		case <-quit:
+		case <-ctx.Done():
 			timer.Stop()
 			log.Debugf("Task %s stopped", task.Name)
 

@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"errors"
+	"golang.org/x/net/context"
 	"sync"
 	"testing"
 	"time"
@@ -11,7 +12,7 @@ import (
 
 func TestRunningTaskReturnsError(t *testing.T) {
 	ok := false
-	assert.Error(t, recurring(
+	assert.Error(t, recurring(nil,
 		Task{
 			Name: "test",
 			Job: func() error {
@@ -20,18 +21,18 @@ func TestRunningTaskReturnsError(t *testing.T) {
 				return errors.New("expected :)")
 			},
 			Interval: 0},
-		nil))
+	))
 	assert.True(t, ok)
 }
 
 func TestStopRunningTask(t *testing.T) {
-	quit := make(chan bool)
+	ctx, cancel := context.WithCancel(context.Background())
 	var wg sync.WaitGroup
 	wg.Add(1)
 	ok := false
 	go func() {
 		defer wg.Done()
-		recurring(Task{
+		recurring(ctx, Task{
 			Name: "test",
 			Job: func() error {
 				ok = true
@@ -39,9 +40,9 @@ func TestStopRunningTask(t *testing.T) {
 				return nil
 			},
 			Interval: time.Second * 10,
-		}, quit)
+		})
 	}()
-	quit <- true
+	cancel()
 	wg.Wait()
 	assert.True(t, ok)
 }
@@ -51,7 +52,7 @@ func TestTaskManagerRunTasks(t *testing.T) {
 	wg.Add(2)
 	manager := NewTaskManager()
 	ok1, ok2 := false, false
-	manager.RunNewTask(Task{
+	manager.RunNewRecurringTask(Task{
 		ID:   "t1-id",
 		Name: "t1",
 		Job: func() error {
@@ -62,7 +63,7 @@ func TestTaskManagerRunTasks(t *testing.T) {
 		},
 		Interval: time.Second * 10,
 	})
-	manager.RunNewTask(Task{
+	manager.RunNewRecurringTask(Task{
 		ID:   "t2-id",
 		Name: "t2",
 		Job: func() error {
