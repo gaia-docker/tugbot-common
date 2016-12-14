@@ -15,7 +15,7 @@ func TestRunningTaskReturnsError(t *testing.T) {
 	assert.Error(t, recurring(nil,
 		Task{
 			Name: "test",
-			Job: func() error {
+			Job: func(interface{}) error {
 				ok = true
 
 				return errors.New("expected :)")
@@ -34,11 +34,13 @@ func TestStopRunningTask(t *testing.T) {
 		defer wg.Done()
 		recurring(ctx, Task{
 			Name: "test",
-			Job: func() error {
+			Job: func(param interface{}) error {
 				ok = true
+				assert.Equal(t, "check me", param)
 
 				return nil
 			},
+			JobParam: "check me",
 			Interval: time.Second * 10,
 		})
 	}()
@@ -55,7 +57,7 @@ func TestTaskManagerRunTasks(t *testing.T) {
 	manager.RunNewRecurringTask(Task{
 		ID:   "t1-id",
 		Name: "t1",
-		Job: func() error {
+		Job: func(interface{}) error {
 			defer wg.Done()
 			ok1 = true
 
@@ -66,7 +68,7 @@ func TestTaskManagerRunTasks(t *testing.T) {
 	manager.RunNewRecurringTask(Task{
 		ID:   "t2-id",
 		Name: "t2",
-		Job: func() error {
+		Job: func(interface{}) error {
 			defer wg.Done()
 			ok2 = true
 

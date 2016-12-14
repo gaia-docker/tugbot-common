@@ -10,7 +10,8 @@ import (
 type Task struct {
 	ID       string
 	Name     string
-	Job      func() error
+	Job      func(interface{}) error
+	JobParam interface{}
 	Interval time.Duration
 }
 
@@ -46,7 +47,7 @@ func (manager *taskManagerImpl) StopTasks() {
 func recurring(ctx context.Context, task Task) error {
 	for {
 		log.Debugf("Running task %s...", task.Name)
-		if err := task.Job(); err != nil {
+		if err := task.Job(task.JobParam); err != nil {
 			log.Errorf("Task %s returned an error: %v", task.Name, err)
 
 			return err
