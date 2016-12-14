@@ -16,8 +16,8 @@ type Task struct {
 }
 
 type TaskManager interface {
-	RunNewRecurringTask(Task)
-	StopTasks()
+	RunNewRecurringTask(Task) bool
+	StopAllTasks()
 }
 
 type taskManagerImpl struct {
@@ -28,17 +28,21 @@ func NewTaskManager() TaskManager {
 	return &taskManagerImpl{taskIdToCancel: make(map[string]context.CancelFunc)}
 }
 
-func (manager *taskManagerImpl) RunNewRecurringTask(task Task) {
+func (manager *taskManagerImpl) RunNewRecurringTask(task Task) bool {
+	ret := false
 	if _, ok := manager.taskIdToCancel[task.ID]; !ok {
 		ctx, cancel := context.WithCancel(context.Background())
 		manager.taskIdToCancel[task.ID] = cancel
 		go func(ctx context.Context) {
 			recurring(ctx, task)
 		}(ctx)
+		ret = true
 	}
+
+	return ret
 }
 
-func (manager *taskManagerImpl) StopTasks() {
+func (manager *taskManagerImpl) StopAllTasks() {
 	for _, currTaskCancel := range manager.taskIdToCancel {
 		currTaskCancel()
 	}

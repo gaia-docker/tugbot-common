@@ -54,7 +54,7 @@ func TestTaskManagerRunTasks(t *testing.T) {
 	wg.Add(2)
 	manager := NewTaskManager()
 	ok1, ok2 := false, false
-	manager.RunNewRecurringTask(Task{
+	assert.True(t, manager.RunNewRecurringTask(Task{
 		ID:   "t1-id",
 		Name: "t1",
 		Job: func(interface{}) error {
@@ -64,8 +64,8 @@ func TestTaskManagerRunTasks(t *testing.T) {
 			return nil
 		},
 		Interval: time.Second * 10,
-	})
-	manager.RunNewRecurringTask(Task{
+	}))
+	assert.True(t, manager.RunNewRecurringTask(Task{
 		ID:   "t2-id",
 		Name: "t2",
 		Job: func(interface{}) error {
@@ -75,9 +75,33 @@ func TestTaskManagerRunTasks(t *testing.T) {
 			return nil
 		},
 		Interval: time.Second * 10,
-	})
+	}))
 	wg.Wait()
-	manager.StopTasks()
+	manager.StopAllTasks()
 	assert.True(t, ok1)
 	assert.True(t, ok2)
+}
+
+func TestTaskManagerRunTasks_TaskAlreadyExist(t *testing.T) {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	manager := NewTaskManager()
+	ok1 := false
+	assert.True(t, manager.RunNewRecurringTask(Task{
+		ID:   "t1-id",
+		Name: "t1",
+		Job: func(interface{}) error {
+			defer wg.Done()
+			ok1 = true
+
+			return nil
+		},
+		Interval: time.Second * 10,
+	}))
+	assert.False(t, manager.RunNewRecurringTask(Task{
+		ID: "t1-id",
+	}))
+	wg.Wait()
+	manager.StopAllTasks()
+	assert.True(t, ok1)
 }
