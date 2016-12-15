@@ -4,6 +4,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"golang.org/x/net/context"
 
+	"sync"
 	"time"
 )
 
@@ -18,9 +19,11 @@ type Task struct {
 type TaskManager interface {
 	RunNewRecurringTask(Task) bool
 	StopAllTasks()
+	Refresh(ids []string)
 }
 
 type taskManagerImpl struct {
+	locker         sync.Mutex
 	taskIdToCancel map[string]context.CancelFunc
 }
 
@@ -32,7 +35,9 @@ func (manager *taskManagerImpl) RunNewRecurringTask(task Task) bool {
 	ret := false
 	if _, ok := manager.taskIdToCancel[task.ID]; !ok {
 		ctx, cancel := context.WithCancel(context.Background())
+		manager.locker.Lock()
 		manager.taskIdToCancel[task.ID] = cancel
+		manager.locker.Unlock()
 		go func(ctx context.Context) {
 			recurring(ctx, task)
 		}(ctx)
@@ -43,9 +48,33 @@ func (manager *taskManagerImpl) RunNewRecurringTask(task Task) bool {
 }
 
 func (manager *taskManagerImpl) StopAllTasks() {
+	manager.locker.Lock()
 	for _, currTaskCancel := range manager.taskIdToCancel {
 		currTaskCancel()
 	}
+	manager.locker.Unlock()
+}
+
+func (manager *taskManagerImpl) Refresh(ids []string) {
+	manager.locker.Lock()
+	new := manager.subMap(ids)
+	for currTaskId, currCancel := range manager.taskIdToCancel {
+		if _, ok := new[currTaskId]; !ok {
+			currCancel()
+		}
+	}
+	manager.locker.Unlock()
+}
+
+func (manager *taskManagerImpl) subMap(ids []string) map[string]context.CancelFunc {
+	ret := make(map[string]context.CancelFunc)
+	for _, currTaskId := range ids {
+		if value, ok := manager.taskIdToCancel[currTaskId]; ok {
+			ret[currTaskId] = value
+		}
+	}
+
+	return ret
 }
 
 func recurring(ctx context.Context, task Task) error {
