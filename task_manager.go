@@ -61,6 +61,7 @@ func (manager *taskManagerImpl) Refresh(ids []string) {
 	for currTaskId, currCancel := range manager.taskIdToCancel {
 		if _, ok := new[currTaskId]; !ok {
 			currCancel()
+			delete(manager.taskIdToCancel, currTaskId)
 		}
 	}
 	manager.locker.Unlock()

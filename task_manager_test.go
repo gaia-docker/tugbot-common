@@ -111,7 +111,7 @@ func TestTaskManagerRefresh(t *testing.T) {
 	wg.Add(2)
 	manager := NewTaskManager()
 	ok1, ok2 := false, false
-	assert.True(t, manager.RunNewRecurringTask(Task{
+	t1 := Task{
 		ID:   "t1-id",
 		Name: "t1",
 		Job: func(interface{}) error {
@@ -121,7 +121,7 @@ func TestTaskManagerRefresh(t *testing.T) {
 			return nil
 		},
 		Interval: time.Second * 10,
-	}))
+	}
 	t2 := Task{
 		ID:   "t2-id",
 		Name: "t2",
@@ -133,11 +133,17 @@ func TestTaskManagerRefresh(t *testing.T) {
 		},
 		Interval: time.Second * 10,
 	}
+	assert.True(t, manager.RunNewRecurringTask(t1))
 	assert.True(t, manager.RunNewRecurringTask(t2))
+	wg.Wait()
+	assert.True(t, ok1)
+	assert.True(t, ok2)
+
+	// removing t1
 	manager.Refresh([]string{t2.ID})
+	wg.Add(1)
+	assert.True(t, manager.RunNewRecurringTask(t1))
 	assert.False(t, manager.RunNewRecurringTask(t2))
 	wg.Wait()
 	manager.StopAllTasks()
-	assert.True(t, ok1)
-	assert.True(t, ok2)
 }
