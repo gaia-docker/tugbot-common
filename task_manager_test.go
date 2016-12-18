@@ -147,3 +147,13 @@ func TestTaskManagerRefresh(t *testing.T) {
 	wg.Wait()
 	manager.StopAllTasks()
 }
+
+func TestTaskManagerRefresh_NilIds(t *testing.T) {
+	manager := NewTaskManager()
+	manager.Refresh(nil)
+}
+
+func TestTaskManagerRefresh_EmptyIds(t *testing.T) {
+	manager := NewTaskManager()
+	manager.Refresh([]string{})
+}

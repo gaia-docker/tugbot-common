@@ -56,15 +56,17 @@ func (manager *taskManagerImpl) StopAllTasks() {
 }
 
 func (manager *taskManagerImpl) Refresh(ids []string) {
-	manager.locker.Lock()
-	new := manager.subMap(ids)
-	for currTaskId, currCancel := range manager.taskIdToCancel {
-		if _, ok := new[currTaskId]; !ok {
-			currCancel()
-			delete(manager.taskIdToCancel, currTaskId)
+	if ids != nil && len(ids) > 0 {
+		manager.locker.Lock()
+		new := manager.subMap(ids)
+		for currTaskId, currCancel := range manager.taskIdToCancel {
+			if _, ok := new[currTaskId]; !ok {
+				currCancel()
+				delete(manager.taskIdToCancel, currTaskId)
+			}
 		}
+		manager.locker.Unlock()
 	}
-	manager.locker.Unlock()
 }
 
 func (manager *taskManagerImpl) subMap(ids []string) map[string]context.CancelFunc {
