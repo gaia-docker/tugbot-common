@@ -9,11 +9,11 @@ import (
 )
 
 type Task struct {
-	ID       string
-	Name     string
-	Job      func(interface{}) error
-	JobParam interface{}
-	Interval time.Duration
+	ID        string
+	Name      string
+	Job       func([]interface{}) error
+	JobParams []interface{}
+	Interval  time.Duration
 }
 
 type TaskManager interface {
@@ -83,7 +83,7 @@ func (manager *taskManagerImpl) subMap(ids []string) map[string]context.CancelFu
 func recurring(ctx context.Context, task Task) error {
 	for {
 		log.Debugf("Running task %s...", task.Name)
-		if err := task.Job(task.JobParam); err != nil {
+		if err := task.Job(task.JobParams); err != nil {
 			log.Errorf("Task %s returned an error: %v", task.Name, err)
 
 			return err

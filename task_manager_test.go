@@ -15,7 +15,7 @@ func TestRunningTaskReturnsError(t *testing.T) {
 	assert.Error(t, recurring(nil,
 		Task{
 			Name: "test",
-			Job: func(interface{}) error {
+			Job: func([]interface{}) error {
 				ok = true
 
 				return errors.New("expected :)")
@@ -34,14 +34,14 @@ func TestStopRunningTask(t *testing.T) {
 		defer wg.Done()
 		recurring(ctx, Task{
 			Name: "test",
-			Job: func(param interface{}) error {
+			Job: func(params []interface{}) error {
 				ok = true
-				assert.Equal(t, "check me", param)
+				assert.Equal(t, "check me", params[0])
 
 				return nil
 			},
-			JobParam: "check me",
-			Interval: time.Second * 10,
+			JobParams: []interface{}{"check me"},
+			Interval:  time.Second * 10,
 		})
 	}()
 	cancel()
@@ -57,7 +57,7 @@ func TestTaskManagerRunTasks(t *testing.T) {
 	assert.True(t, manager.RunNewRecurringTask(Task{
 		ID:   "t1-id",
 		Name: "t1",
-		Job: func(interface{}) error {
+		Job: func([]interface{}) error {
 			defer wg.Done()
 			ok1 = true
 
@@ -68,7 +68,7 @@ func TestTaskManagerRunTasks(t *testing.T) {
 	assert.True(t, manager.RunNewRecurringTask(Task{
 		ID:   "t2-id",
 		Name: "t2",
-		Job: func(interface{}) error {
+		Job: func([]interface{}) error {
 			defer wg.Done()
 			ok2 = true
 
@@ -90,7 +90,7 @@ func TestTaskManagerRunTasks_TaskAlreadyExist(t *testing.T) {
 	assert.True(t, manager.RunNewRecurringTask(Task{
 		ID:   "t1-id",
 		Name: "t1",
-		Job: func(interface{}) error {
+		Job: func([]interface{}) error {
 			defer wg.Done()
 			ok1 = true
 
@@ -114,7 +114,7 @@ func TestTaskManagerRefresh(t *testing.T) {
 	t1 := Task{
 		ID:   "t1-id",
 		Name: "t1",
-		Job: func(interface{}) error {
+		Job: func([]interface{}) error {
 			defer wg.Done()
 			ok1 = true
 
@@ -125,7 +125,7 @@ func TestTaskManagerRefresh(t *testing.T) {
 	t2 := Task{
 		ID:   "t2-id",
 		Name: "t2",
-		Job: func(interface{}) error {
+		Job: func([]interface{}) error {
 			defer wg.Done()
 			ok2 = true
 
