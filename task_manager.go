@@ -49,10 +49,11 @@ func (manager *taskManagerImpl) RunNewRecurringTask(task Task) bool {
 
 func (manager *taskManagerImpl) StopAllTasks() {
 	manager.locker.Lock()
+	defer manager.locker.Unlock()
 	for _, currTaskCancel := range manager.taskIdToCancel {
 		currTaskCancel()
 	}
-	manager.locker.Unlock()
+	manager.taskIdToCancel = make(map[string]context.CancelFunc)
 }
 
 func (manager *taskManagerImpl) Refresh(ids []string) {
