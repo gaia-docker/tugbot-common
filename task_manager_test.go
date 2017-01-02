@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func TestRunningTaskReturnsError(t *testing.T) {
+func TestRunningTaskRecurringReturnsError(t *testing.T) {
 	ok := false
 	assert.Error(t, recurring(nil,
 		Task{
@@ -25,22 +25,23 @@ func TestRunningTaskReturnsError(t *testing.T) {
 	assert.True(t, ok)
 }
 
-func TestStopRunningTask(t *testing.T) {
+func TestStopRecurringTask(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	var wg sync.WaitGroup
 	wg.Add(1)
 	ok := false
+	const param = "check me"
 	go func() {
 		defer wg.Done()
 		recurring(ctx, Task{
 			Name: "test",
 			Job: func(params []interface{}) error {
 				ok = true
-				assert.Equal(t, "check me", params[0])
+				assert.Equal(t, param, params[0])
 
 				return nil
 			},
-			JobParams: []interface{}{"check me"},
+			JobParams: []interface{}{param},
 			Interval:  time.Second * 10,
 		})
 	}()
