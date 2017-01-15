@@ -12,13 +12,6 @@ imports:
   version: 478fcf54317e52ab69f40bb4c7a1520288d7f7ea
   subpackages:
   - unix
-- name: gopkg.in/olivere/elastic.v2
-  version: b272fab42387a42585235d56f8c6b53b13ddfb7d
-- name: gopkg.in/olivere/elastic.v5
-  version: b272fab42387a42585235d56f8c6b53b13ddfb7d
-  subpackages:
-  - backoff
-  - uritemplates
 testImports:
 - name: github.com/davecgh/go-spew
   version: 6d212800a42e8ab5c146b8ace3490ee17e5225f9
